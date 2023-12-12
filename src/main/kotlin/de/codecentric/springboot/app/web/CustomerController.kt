@@ -32,13 +32,13 @@ class CustomerController(val api: API) {
     }
 }
 
-data class CustomerDTO(val id: String?, val name: String, val age: Long?) {
+data class CustomerDTO(val id: String, val name: String, val age: Long?) {
     companion object
 }
 
-private fun CustomerDTO.toDomain(): Customer = Customer(id?.let { Id(it) }, Name(name), age?.let { Age(it) })
+private fun CustomerDTO.toDomain(): Customer = Customer(Id(id), Name(name), age?.let { Age(it) })
 private fun CustomerDTO.Companion.fromDomain(customer: Customer) = CustomerDTO(
-    customer.id?.value,
+    customer.id.value,
     customer.name.value,
     customer.age?.value
 )

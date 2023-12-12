@@ -1,5 +1,10 @@
 package de.codecentric.springboot.domain
 
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.OneToOne
+import org.springframework.data.repository.CrudRepository
+
 @JvmInline
 value class Id(val value: String)
 
@@ -10,24 +15,14 @@ value class Name(val value: String)
 value class Age(val value: Long)
 
 data class Customer(
-    val id: Id?,
+    val id: Id,
     val name: Name,
     val age: Age?,
 )
 
-interface CustomerRepository {
-    fun findAll(): List<Customer>
-    fun saveCustomer(customer: Customer)
-    fun findById(id: String): Customer?
+@Entity
+data class CustomerDAO(@jakarta.persistence.Id val id: String, val name: String, val age: Long) {
+    constructor() : this("", "", 0)
 }
 
-class InMemoryCustomerStorage : CustomerRepository {
-    val customerStorage = hashMapOf<String, Customer>(
-        Pair("12345", Customer(Id("12345"), Name("Paula"), Age(30)))
-    )
-    override fun findAll(): List<Customer> = customerStorage.values.toList()
-
-    override fun saveCustomer(customer: Customer) = customer.let { customerStorage[customer.id!!.value] = it }
-
-    override fun findById(id: String) = customerStorage[id]
-}
+interface CustomerRepository : CrudRepository<CustomerDAO, String>
